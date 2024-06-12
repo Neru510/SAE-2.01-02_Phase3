@@ -2,24 +2,26 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.IJoueur;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class VueJoueurInfo extends HBox {
+public class VueJoueurCourantInfo extends HBox {
     private ChangeListener<IJoueur> joueurChangeListener;
     private IJeu jeu;
     private HBox vue;
 
-    private Image cube;
+    private ImageView cube;
     private Label argentLabel;
     private Label railsLabel;
     private Label pointsVictoire;
@@ -32,10 +34,9 @@ public class VueJoueurInfo extends HBox {
     Label nomJoueur;
 
 
-    public VueJoueurInfo(IJeu jeu){
+    public VueJoueurCourantInfo(IJeu jeu){
         this.jeu = jeu;
         this.vue = new HBox();
-        this.cube = null;
         this.couleursJoueurs = new CouleursJoueurs();
         this.nomJoueur = new Label();
         this.argentLabel = new Label();
@@ -45,18 +46,26 @@ public class VueJoueurInfo extends HBox {
         this.cartesEnMain = new Label();
         this.pioche = new Label();
         this.defausse = new Label();
-        cube = new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()) + ".png");
+        this.cube = new ImageView(new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()) + ".png"));
         creerBindings();
         fillVue();
         this.getChildren().add(vue);
         this.setPadding(new Insets(10));
+
     }
 
     public void creerBindings(){
 
-        joueurChangeListener = (observableValue, joueur, t1) -> {
-            cube = new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()) + ".png");
-        };
+        cube.imageProperty().bind(new ObjectBinding<>(){
+            {
+                super.bind(jeu.joueurCourantProperty());
+            }
+
+            @Override
+            protected Image computeValue() {
+                return new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()) + ".png");
+            }
+        });
 
         StringBinding nomJoueurBinding = new StringBinding() {
             {
@@ -147,8 +156,6 @@ public class VueJoueurInfo extends HBox {
             }
             @Override
             protected String computeValue() {
-                System.out.println(couleursJoueurs.getCouleur(jeu.joueurCourantProperty().getValue().getCouleur()));
-                System.out.println(couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()));
                 return "-fx-background-color: " + couleursJoueurs.getCouleur(jeu.joueurCourantProperty().getValue().getCouleur());
             }
         });
@@ -163,11 +170,10 @@ public class VueJoueurInfo extends HBox {
 
         nomJoueur.textProperty().bind(nomJoueurBinding);
 
-        jeu.joueurCourantProperty().addListener(joueurChangeListener);
     }
 
     public void fillVue(){
-        vue.getChildren().add(nomJoueur);
+        HBox box = new HBox();
         List<Label> labelList = new ArrayList<>();
         labelList.add(argentLabel);
         labelList.add(railsLabel);
@@ -180,7 +186,7 @@ public class VueJoueurInfo extends HBox {
         viewList.add(new ImageView(new Image("images/boutons/coins.png")));
         viewList.add(new ImageView(new Image("images/boutons/rail.png")));
         viewList.add(new ImageView(new Image("images/boutons/star.png")));
-        viewList.add(new ImageView(cube));
+        viewList.add(cube);
         viewList.add(new ImageView(new Image("images/icons/main.png")));
         viewList.add(new ImageView(new Image("images/icons/pioche.png")));
         viewList.add(new ImageView(new Image("images/icons/cards.png")));
@@ -189,10 +195,17 @@ public class VueJoueurInfo extends HBox {
             viewList.get(i).setFitWidth(20);
             viewList.get(i).setFitHeight(20);
             HBox hbox = new HBox(viewList.get(i), labelList.get(i));
-            vue.getChildren().add(hbox);
+            box.getChildren().add(hbox);
         }
-        vue.setAlignment(Pos.BASELINE_CENTER);
+        box.setSpacing(10);
+        Region region = new Region();// le jeu doit être démarré après que les bindings ont été mis en place
+        HBox.setHgrow(region, Priority.ALWAYS);
+
+        vue.getChildren().addAll(nomJoueur, region, box);
+
+
         vue.setSpacing(10);
+        vue.prefWidthProperty().bind(this.widthProperty());
     }
 
 }
