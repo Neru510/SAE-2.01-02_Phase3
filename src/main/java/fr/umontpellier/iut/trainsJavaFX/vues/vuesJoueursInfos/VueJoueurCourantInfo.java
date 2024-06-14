@@ -1,21 +1,14 @@
-package fr.umontpellier.iut.trainsJavaFX.vues;
+package fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos;
 
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
+import fr.umontpellier.iut.trainsJavaFX.vues.CouleursJoueurs;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VueJoueurCourantInfo extends VueJoueursInfos {
     private IJeu jeu;
@@ -44,6 +37,16 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
                 return new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(jeu.joueurCourantProperty().getValue().getCouleur()) + ".png");
             }
         });
+
+        StringBinding cubesBinding = new StringBinding() {
+            {
+                super.bind(jeu.joueurCourantProperty());
+            }
+            @Override
+            protected String computeValue() {
+                return Integer.toString(jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue());
+            }
+        };
 
         StringBinding nomJoueurBinding = new StringBinding() {
             {
@@ -82,16 +85,6 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
             @Override
             protected String computeValue() {
                 return Integer.toString(jeu.joueurCourantProperty().getValue().scoreProperty().getValue());
-            }
-        };
-
-        StringBinding cubesBinding = new StringBinding() {
-            {
-                super.bind(jeu.joueurCourantProperty());
-            }
-            @Override
-            protected String computeValue() {
-                return jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().toString();
             }
         };
 
@@ -139,9 +132,9 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
         });
 
         argentLabel.textProperty().bind(argentBinding);
+        cubes.textProperty().bind(cubesBinding);
         railsLabel.textProperty().bind(railsBinding);
         pointsVictoire.textProperty().bind(nbPointVictoireBinding);
-        cubes.textProperty().bind(cubesBinding);
         cartesEnMain.textProperty().bind(cartesEnMainBinding);
         pioche.textProperty().bind(piocheBinding);
         defausse.textProperty().bind(defausseBinding);

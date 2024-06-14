@@ -1,6 +1,7 @@
-package fr.umontpellier.iut.trainsJavaFX.vues;
+package fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos;
 
 import fr.umontpellier.iut.trainsJavaFX.mecanique.CouleurJoueur;
+import fr.umontpellier.iut.trainsJavaFX.vues.CouleursJoueurs;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -43,7 +44,7 @@ public abstract class VueJoueursInfos extends HBox{
         labelList.add(argentLabel);
         labelList.add(railsLabel);
         labelList.add(pointsVictoire);
-        labelList.add(new Label(""));
+        labelList.add(cubes);
         labelList.add(cartesEnMain);
         labelList.add(pioche);
         labelList.add(defausse);

@@ -1,28 +1,19 @@
-package fr.umontpellier.iut.trainsJavaFX.vues;
+package fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos;
 
-import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.IJoueur;
-import javafx.beans.binding.ObjectBinding;
-import javafx.beans.binding.StringBinding;
-import javafx.beans.property.SimpleIntegerProperty;
+import fr.umontpellier.iut.trainsJavaFX.vues.CouleursJoueurs;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class VueJoueurInfo extends VueJoueursInfos {
     private IJoueur joueur;
     private ImageView cube;
     public VueJoueurInfo(IJoueur joueur) {
-        super (new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new CouleursJoueurs(), new BorderPane());
+        super (new Label(String.valueOf(joueur.argentProperty().getValue())), new Label(String.valueOf(joueur.pointsRailsProperty().getValue())), new Label(String.valueOf(joueur.getScoreTotal())), new Label(String.valueOf(joueur.nbJetonsRailsProperty().getValue())), new Label(String.valueOf(joueur.mainProperty().getValue().size())), new Label(String.valueOf(joueur.piocheProperty().getValue().size())), new Label(String.valueOf(joueur.defausseProperty().getValue().size())), new Label(joueur.getNom()), new CouleursJoueurs(), new BorderPane());
+        System.out.println(joueur.getScoreTotal());
         this.joueur = joueur;
         this.cube = new ImageView(new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(joueur.getCouleur()) + ".png"));
 

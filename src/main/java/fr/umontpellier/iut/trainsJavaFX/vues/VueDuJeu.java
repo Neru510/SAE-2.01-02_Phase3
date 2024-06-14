@@ -31,7 +31,7 @@ public class VueDuJeu extends Pane {
         passer.setOnMouseClicked(mouseEvent -> jeu.passerAEteChoisi());
         getChildren().add(plateau);
         getChildren().add(new VueJoueurCourant(jeu));
-        getChildren().add(new VueJoueursAutresInfos(jeu));
+        //getChildren().add(new VueJoueursAutresInfos(jeu));
         getChildren().add(passer);
         //getChildren().add(instruction);
     }
