@@ -205,6 +205,8 @@ public class VuePlateau extends Pane {
     }
 
     private void choixTuile(MouseEvent event) {
+        Group tuileChoisie = (Group) event.getSource();
+        GestionJeu.getJeu().uneTuileAEteChoisie(tuileChoisie.getId());
         System.out.println("Une tuile a été choisie");
     }
 }

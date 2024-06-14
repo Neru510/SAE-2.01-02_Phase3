@@ -1,7 +1,10 @@
 package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
+import javafx.beans.binding.StringBinding;
 import javafx.event.EventHandler;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
@@ -22,7 +25,15 @@ public class VueDuJeu extends Pane {
     public VueDuJeu(IJeu jeu) {
         this.jeu = jeu;
         plateau = new VuePlateau();
+        Button passer = new Button("Passer");
+        Label instruction = new Label();
+        instruction.textProperty().bind(jeu.instructionProperty());
+        passer.setOnMouseClicked(mouseEvent -> jeu.passerAEteChoisi());
         getChildren().add(plateau);
+        getChildren().add(new VueJoueurCourant(jeu));
+        getChildren().add(new VueJoueursAutresInfos(jeu));
+        getChildren().add(passer);
+        //getChildren().add(instruction);
     }
 
     public void creerBindings() {

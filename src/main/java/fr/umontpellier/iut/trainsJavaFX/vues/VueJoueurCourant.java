@@ -54,9 +54,6 @@ public class VueJoueurCourant extends VBox {
         this.conteneur1 = new VBox();
         Pane separator = new Pane();
         separator.setMinHeight(15);
-        for (int i = 0; i < jeu.getJoueurs().size(); i++){
-
-        }
         this.conteneur2 = new VBox(cartesenJeuVue, separator, cartesRecuesVue);
         this.getChildren().addAll(conteneur1, joueurCourantInfo, conteneur2);
 
@@ -67,6 +64,7 @@ public class VueJoueurCourant extends VBox {
     public void creerBindings(){
 
         jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().addListener((ListChangeListener<Carte>) change -> {
+            cartesEnJeu.getChildren().clear();
             cartesJ.clear();
             for (Carte c : jeu.joueurCourantProperty().get().cartesEnJeuProperty().get()){
                 String string = c.getNom();
@@ -78,6 +76,7 @@ public class VueJoueurCourant extends VBox {
         });
 
         jeu.joueurCourantProperty().getValue().cartesRecuesProperty().addListener((ListChangeListener<Carte>) change -> {
+            cartesRecues.getChildren().clear();
             cartesR.clear();
             for (Carte c : jeu.joueurCourantProperty().get().cartesRecuesProperty().get()){
                 String string = c.getNom();

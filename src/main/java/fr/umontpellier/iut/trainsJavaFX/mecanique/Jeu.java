@@ -370,6 +370,8 @@ public class Jeu implements IJeu {
     public void passerAEteChoisi() {
         Joueur leJoueur = ((Joueur) joueurCourant.getValue());
         leJoueur.getEtatCourant().passer();
+        System.out.println("passer à été choisi");
+        System.out.println(joueurCourant.getValue().getNom());
     }
 
     @Override
