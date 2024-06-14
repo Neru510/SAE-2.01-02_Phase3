@@ -2,6 +2,7 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
+import fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos.VueJoueurCourantInfo;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
