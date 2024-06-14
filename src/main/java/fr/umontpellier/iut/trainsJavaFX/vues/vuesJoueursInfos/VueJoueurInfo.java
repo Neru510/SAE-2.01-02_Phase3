@@ -13,7 +13,6 @@ public class VueJoueurInfo extends VueJoueursInfos {
     private ImageView cube;
     public VueJoueurInfo(IJoueur joueur) {
         super (new Label(String.valueOf(joueur.argentProperty().getValue())), new Label(String.valueOf(joueur.pointsRailsProperty().getValue())), new Label(String.valueOf(joueur.getScoreTotal())), new Label(String.valueOf(joueur.nbJetonsRailsProperty().getValue())), new Label(String.valueOf(joueur.mainProperty().getValue().size())), new Label(String.valueOf(joueur.piocheProperty().getValue().size())), new Label(String.valueOf(joueur.defausseProperty().getValue().size())), new Label(joueur.getNom()), new CouleursJoueurs(), new BorderPane());
-        System.out.println(joueur.getScoreTotal());
         this.joueur = joueur;
         this.cube = new ImageView(new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(joueur.getCouleur()) + ".png"));
 
