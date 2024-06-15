@@ -166,9 +166,8 @@ public class VuePlateau extends Pane {
 
     private void ajouteRail(Tuile t, Joueur j, Circle pionJoueur) {
         t.getRails().addListener((SetChangeListener<IJoueur>) change -> {
-            if(t.hasRail(j)){
+            if (t.hasRail(j))
                 ajouteRailATuile(t, j, pionJoueur);
-            }
         });
     }
 
