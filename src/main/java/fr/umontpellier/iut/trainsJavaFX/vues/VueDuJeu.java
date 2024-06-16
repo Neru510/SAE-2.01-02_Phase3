@@ -32,14 +32,22 @@ public class VueDuJeu extends GridPane {
     private HBox vueBas;
     private VBox vueDroit;
     private VBox vueCentre;
+    private HBox vueGauche;
     private VuePlateau plateau;
-    private VueReserve vueGauche;
+    private VueReserve vueReserve;
+    private VuePioche vuePioche;
+    private VueDefausse vueDefausse;
+
 
     public VueDuJeu(IJeu jeu) {
         this.jeu = jeu;
-        vueGauche = new VueReserve(jeu);
+        vueReserve = new VueReserve(jeu);
         plateau = new VuePlateau();
         vueCentre = new VBox(plateau);
+        Joueur joueurCourant = (Joueur) jeu.joueurCourantProperty().getValue();
+        vuePioche = new VuePioche(joueurCourant);
+        vueDefausse = new VueDefausse(joueurCourant);
+        vueGauche();
         Button passer = new Button("Passer");
         Label instruction = new Label();
         instruction.textProperty().bind(jeu.instructionProperty());
@@ -54,14 +62,15 @@ public class VueDuJeu extends GridPane {
 
 
         vueBas = new HBox();
-        add(vueGauche, 0, 0);
+        add(vueReserve, 0, 0);
+        add(vueGauche, 0,1);
         add(vueCentre, 1, 0);
         add(vueDroit, 2, 0, 1, 2);
 
         this.setStyle("-fx-background-color: #2c2c2c");
 
+
         vueBas();
-        vueGauche();
         vueCentre();
         creerBindings();
     }
@@ -78,8 +87,16 @@ public class VueDuJeu extends GridPane {
 
     public void vueGauche(){
         //vueGauche.prefWidthProperty().bind(this.widthProperty().divide(3));
+        vueGauche = new HBox(vuePioche, vueDefausse);
+        vuePioche.prefHeightProperty().bind(this.widthProperty().divide(2));
+        vuePioche.prefWidthProperty().bind(this.widthProperty().divide(2));
+        vueDefausse.prefHeightProperty().bind(this.widthProperty().divide(2));
+        vueDefausse.prefWidthProperty().bind(this.widthProperty().divide(2));
+        vueGauche.prefWidthProperty().bind(this.widthProperty());
         vueGauche.prefHeightProperty().bind(this.heightProperty());
+
         VBox.setVgrow(vueGauche, Priority.ALWAYS);
+
     }
 
     public void vueCentre(){
