@@ -47,7 +47,7 @@ public class TrainsIHM extends Application {
             nomsJoueurs = vueChoixJoueurs.getNomsJoueurs().toArray(new String[0]);
             plateau = vueChoixJoueurs.getPlateau();
        } else {
-            nomsJoueurs = new String[]{"John", "Paul"/*, "George", "Ringo"*/};
+            nomsJoueurs = new String[]{"John", "Paul", "George", "Ringo"};
        }
         // Tirer aléatoirement 8 cartes préparation
         List<String> cartesPreparation = new ArrayList<>(FabriqueListeDeCartes.getNomsCartesPreparation());
@@ -58,7 +58,6 @@ public class TrainsIHM extends Application {
         VueDuJeu vueDuJeu = new VueDuJeu(jeu);
 
         Scene scene = new Scene(vueDuJeu, Screen.getPrimary().getBounds().getWidth() * DonneesGraphiques.pourcentageEcran, Screen.getPrimary().getBounds().getHeight() * DonneesGraphiques.pourcentageEcran); // la scene doit être créée avant de mettre en place les bindings
-        vueDuJeu.creerBindings();
         jeu.run(); // le jeu doit être démarré après que les bindings ont été mis en place
 
 //        VueResultats vueResultats = new VueResultats(this);

@@ -40,7 +40,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding cubesBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty());
             }
             @Override
             protected String computeValue() {
@@ -60,7 +60,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding argentBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().argentProperty());
             }
             @Override
             protected String computeValue() {
@@ -70,7 +70,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding railsBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().pointsRailsProperty());
             }
             @Override
             protected String computeValue() {
@@ -80,7 +80,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding nbPointVictoireBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().scoreProperty());
             }
             @Override
             protected String computeValue() {
@@ -90,7 +90,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding cartesEnMainBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().mainProperty());
             }
             @Override
             protected String computeValue() {
@@ -101,7 +101,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding piocheBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().piocheProperty());
             }
             @Override
             protected String computeValue() {
@@ -112,7 +112,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
 
         StringBinding defausseBinding = new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().defausseProperty());
             }
             @Override
             protected String computeValue() {
