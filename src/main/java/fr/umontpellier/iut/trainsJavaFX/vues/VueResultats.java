@@ -43,7 +43,7 @@ public class VueResultats extends GridPane {
         ObservableList<? extends IJoueur> joueursTries = FXCollections.observableArrayList(ihm.getJeu().getJoueurs());
         joueursTries.sort(Comparator.comparing(IJoueur::getScoreTotal).reversed());
 
-        Label plan = new Label(" Joueur :" + " Totale :");
+        Label plan = new Label(" Joueur :" + " Total :");
         vbox.getChildren().add(plan);
 
         for (IJoueur joueur : joueursTries) {
@@ -54,9 +54,9 @@ public class VueResultats extends GridPane {
         Button boutonRelancer = new Button("Relancer le jeu");
         boutonRelancer.setOnAction(e -> {
             fenetreResultats.close();
-            Platform.exit();
+            ihm.getPrimaryStage().close();
             this.ihm = new TrainsIHM();
-            ihm.start(ihm.getPrimaryStage());
+            ihm.start(new Stage());
         });
 
         Button boutonEteindre = new Button("Éteindre le jeu");

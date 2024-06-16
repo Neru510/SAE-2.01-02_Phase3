@@ -5,6 +5,7 @@ import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.ListeDeCartes;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EcarteHorairesEstivaux;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixPersonnelDeGare;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.tournormal.CarteEnMainChoisie;
@@ -20,10 +21,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Cette classe correspond à la fenêtre principale de l'application.
@@ -47,7 +45,6 @@ public class VueDuJeu extends GridPane {
     private VueDefausse vueDefausse;
     private BooleanProperty checkAction;
     private VueInstructionsBoutons infos;
-    private HBox listeChoix;
 
 
     public VueDuJeu(IJeu jeu) {
@@ -57,7 +54,6 @@ public class VueDuJeu extends GridPane {
         vueCentre = new VBox(plateau);
         vuePioche = new VuePioche(jeu);
         vueDefausse = new VueDefausse(jeu);
-        listeChoix = new HBox();
         infos = new VueInstructionsBoutons(jeu);
         vueGauche();
         Button passer = new Button("Passer");
@@ -132,9 +128,6 @@ public class VueDuJeu extends GridPane {
                 imageView.setOnMouseClicked(mouseEvent -> {
                     Carte t = map.get(imageView);
                     jeu.joueurCourantProperty().getValue().uneCarteDeLaMainAEteChoisie(t.getNom());
-                    if (t.getNom() == "Train omnibus"){
-                        jeu.finDePartieProperty().set(true);
-                    }
                     vueBas.getChildren().remove(imageView);
                 });
             }
@@ -142,6 +135,11 @@ public class VueDuJeu extends GridPane {
             if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
                 imageView.setOnMouseClicked(mouseEvent -> {
                     Carte t = map.get(imageView);
+                    /*if (Objects.equals(t.getNom(), "Train omnibus")){
+                        System.out.println(t.getNom());
+                        jeu.finDePartieProperty().set(true);
+                    }*/
+                    System.out.println(t.getNom());
                     if (checkAction.getValue()){
                         jeu.uneCarteAChoisirChoisie(t.getNom());
                     }
@@ -197,6 +195,19 @@ public class VueDuJeu extends GridPane {
                         }
                         infos.modifierListeButtons(liste);
                     }
+                    if (t.getNom().contains("Horaires estivaux")){
+                        Button ecarter = new Button("Écarter");
+                        infos.getChildren().add(ecarter);
+                        ecarter.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                EcarteHorairesEstivaux ecarteHorairesEstivaux = new EcarteHorairesEstivaux((Joueur) jeu.joueurCourantProperty().getValue());
+                                ecarteHorairesEstivaux.carteEnJeuChoisie("Horaires estivaux");
+                                infos.getChildren().remove(ecarter);
+                            }
+                        });
+                    }
+
                 });
             }
         }

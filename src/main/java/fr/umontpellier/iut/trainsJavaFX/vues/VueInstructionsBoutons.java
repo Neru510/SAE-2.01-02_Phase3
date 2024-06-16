@@ -48,9 +48,8 @@ public class VueInstructionsBoutons extends VBox {
         }
         for (Carte t : buttons){
             ImageView imageView = new ImageView(new Image(VueJoueurCourant.creerURL(t)));
-            imageView.setFitWidth(100);
             imageView.setPreserveRatio(true);
-            imageView.setFitHeight(100);
+            imageView.setFitHeight(200);
             imageView.setOnMouseClicked(mouseEvent -> {
                 ChoixTrainParcAttraction choix = new ChoixTrainParcAttraction((Joueur) jeu.joueurCourantProperty().getValue(), noms);
                 choix.carteEnJeuChoisie(t.getNom());
