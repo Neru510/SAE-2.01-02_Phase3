@@ -3,8 +3,10 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixCarteRemorquage;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixFeuDeSignalisation;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixTrainEchangeur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixTrainParcAttraction;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -24,15 +26,13 @@ public class VueInstructionsBoutons extends VBox {
     private IJeu jeu;
     private Label instruction;
     private Button passer;
-    private HBox buttons;
     private HBox cartes;
     public VueInstructionsBoutons(IJeu jeu){
         this.jeu = jeu;
         this.instruction = new Label();
         this.passer = new Button("Passer");
-        this.buttons = new HBox();
         this.cartes = new HBox();
-        VBox vue = new VBox(instruction, passer, buttons, cartes);
+        VBox vue = new VBox(instruction, passer, cartes);
         this.getChildren().add(vue);
         creerBindings();
         this.setStyle("-fx-background-color: #f1f1f1; -fx-end-margin: 10; -fx-start-margin: 10");
@@ -92,11 +92,6 @@ public class VueInstructionsBoutons extends VBox {
     }
 
     public void modifierListeButtonRemorquage(List<Carte> buttons){
-        Set<String> noms = new HashSet<>();
-        for (Carte t : buttons){
-            noms.add(t.getNom());
-            jeu.joueurCourantProperty().getValue().defausseProperty().retirer(t.getNom());
-        }
         for (Carte t : buttons){
             ImageView imageView = new ImageView(new Image(VueJoueurCourant.creerURL(t)));
             imageView.setPreserveRatio(true);
@@ -111,6 +106,30 @@ public class VueInstructionsBoutons extends VBox {
                 cartes.getChildren().clear();
             });
             this.cartes.getChildren().add(imageView);
+        }
+    }
+
+    public void modifierListeButtonEchangeur(List<Carte> buttons){
+        Set<String> cartesNoms = new HashSet<>();
+        for (Carte c : buttons){
+            ImageView imageView = new ImageView(new Image(VueJoueurCourant.creerURL(c)));
+            cartes.getChildren().add(imageView);
+            jeu.joueurCourantProperty().getValue().mainProperty().remove(c);
+            cartesNoms.add(c.getNom());
+            imageView.setFitHeight(200);
+            imageView.setPreserveRatio(true);
+            imageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    buttons.remove(c);
+                    for (Carte c : buttons){
+                        jeu.joueurCourantProperty().getValue().mainProperty().add(c);
+                    }
+                    ChoixTrainEchangeur choix = new ChoixTrainEchangeur((Joueur) jeu.joueurCourantProperty().getValue(), cartesNoms);
+                    choix.carteEnJeuChoisie(c.getNom());
+                    cartes.getChildren().clear();
+                }
+            });
         }
     }
 }

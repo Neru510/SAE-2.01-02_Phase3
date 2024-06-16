@@ -73,7 +73,6 @@ public class VueJoueurCourant extends VBox {
         ListChangeListener<Carte> changeListener = new ListChangeListener<Carte>() {
             @Override
             public void onChanged(Change<? extends Carte> change) {
-                System.out.println("A bien reçue les instructions de cartesEnJeu");
                 cartesenJeuVue.getChildren().clear();
                 int i = 0;
                 for (Carte c : jeu.joueurCourantProperty().get().cartesEnJeuProperty().get()) {
@@ -92,7 +91,6 @@ public class VueJoueurCourant extends VBox {
         jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().addListener(changeListener);
 
         jeu.joueurCourantProperty().getValue().cartesRecuesProperty().addListener((ListChangeListener<Carte>) change -> {
-            System.out.println("A bien reçue les instructions de cartesRecues");
             cartesRecuesVue.getChildren().clear();
             int i = 0;
             for (Carte c : jeu.joueurCourantProperty().get().cartesRecuesProperty().get()){

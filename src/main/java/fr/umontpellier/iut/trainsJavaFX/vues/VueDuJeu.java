@@ -58,10 +58,6 @@ public class VueDuJeu extends GridPane {
         vueDefausse = new VueDefausse(jeu);
         infos = new VueInstructionsBoutons(jeu);
         vueGauche();
-        Button passer = new Button("Passer");
-        Label instruction = new Label();
-        instruction.textProperty().bind(jeu.instructionProperty());
-        passer.setOnMouseClicked(mouseEvent -> jeu.passerAEteChoisi());
         vueDroite();
         RowConstraints row1 = new RowConstraints();
         row1.setPercentHeight(70);
@@ -129,7 +125,6 @@ public class VueDuJeu extends GridPane {
 
             if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
                 imageView.setOnMouseClicked(mouseEvent -> {
-                    System.out.println("help");
                     Carte t = map.get(imageView);
                     checkAction.setValue(false);
                     EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
@@ -213,6 +208,15 @@ public class VueDuJeu extends GridPane {
                             }
                         }
                         infos.modifierListeButtonRemorquage(carteList);
+                    }
+                    if (t.getNom().contains("Échangeur")){
+                        List<Carte> cartes = new ArrayList<>();
+                        for (Carte carte : jeu.joueurCourantProperty().getValue().mainProperty().get()){
+                            if (carte.hasType(TypeCarte.TRAIN)){
+                                cartes.add(carte);
+                            }
+                        }
+                        infos.modifierListeButtonEchangeur(cartes);
                     }
                 });
             }
