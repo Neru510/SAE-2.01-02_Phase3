@@ -1,16 +1,9 @@
 package fr.umontpellier.iut.trainsJavaFX.vues;
 
-import fr.umontpellier.iut.trainsJavaFX.GestionJeu;
 import fr.umontpellier.iut.trainsJavaFX.ICarte;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
-import fr.umontpellier.iut.trainsJavaFX.IJoueur;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
-import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -18,11 +11,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.util.Map;
 
@@ -31,12 +21,13 @@ import java.util.Map;
  * <p>
  * On y définit le listener à exécuter lorsque cette carte a été choisie par l'utilisateur
  */
-public class VueCarte extends StackPane {
+public class VueCarteReserve extends StackPane {
 
     private final ICarte carte;
+    private ImageView imageCarte;
 
 
-    public VueCarte(ICarte carte, IJeu jeu) {
+    public VueCarteReserve(ICarte carte, IJeu jeu) {
         this.carte = carte;
         Circle cercle = new Circle(20);
         Label label = new Label();
@@ -57,11 +48,14 @@ public class VueCarte extends StackPane {
         StackPane conteur = new StackPane(cercle);
 
         Image image = new Image(creerURL(carte));
-        ImageView imageCarte = new ImageView(image);
+        imageCarte = new ImageView(image);
         imageCarte.setPreserveRatio(true);
         imageCarte.setFitWidth(130);
         getChildren().addAll(imageCarte, conteur, label);
         setAlignment(Pos.CENTER);
+        ImageView imageCopie = new ImageView(image);
+        imageCopie.setPreserveRatio(true);
+        imageCopie.setFitWidth(500);
 
     }
     public void setCarteChoisieListener(EventHandler<MouseEvent> quandCarteEstChoisie) {
@@ -79,6 +73,13 @@ public class VueCarte extends StackPane {
 
     public ICarte getCarte(){
         return carte;
+    }
+
+    public void carteMouseEntered(){
+        imageCarte.setFitWidth(250);
+    }
+    public void carteMouseExit(){
+        imageCarte.setFitWidth(130);
     }
 
 }
