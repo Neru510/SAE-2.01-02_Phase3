@@ -18,7 +18,6 @@ public class VuePioche extends Pane {
     public VuePioche(Joueur joueurCourant) {
         this.joueurCourant = joueurCourant;
 
-        // Load the deck image
         deckImageView = new ImageView(new Image("images/boutons/deck.png"));
 
         deckImageView.fitHeightProperty().bind(this.heightProperty());
@@ -26,7 +25,6 @@ public class VuePioche extends Pane {
 
         deckImageView.setPreserveRatio(true);
 
-        // Create the tooltip and bind its text to the deck list
         deckTooltip = new Tooltip();
         deckTooltip.textProperty().bind(Bindings.createStringBinding(() -> {
             return joueurCourant.getPioche().stream()

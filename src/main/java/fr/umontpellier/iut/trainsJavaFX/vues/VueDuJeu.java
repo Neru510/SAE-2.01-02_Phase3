@@ -60,7 +60,6 @@ public class VueDuJeu extends GridPane {
         this.getColumnConstraints().add(col1);
 
 
-
         vueBas = new HBox();
         add(vueReserve, 0, 0);
         add(vueGauche, 0,1);

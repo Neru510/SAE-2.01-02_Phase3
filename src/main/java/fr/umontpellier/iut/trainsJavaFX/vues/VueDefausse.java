@@ -18,7 +18,6 @@ public class VueDefausse extends Pane {
     public VueDefausse(Joueur joueurCourant) {
         this.joueurCourant = joueurCourant;
 
-        // Load the deck image
         deckImageView = new ImageView(new Image("images/boutons/defausse.png"));
 
         deckImageView.fitHeightProperty().bind(this.heightProperty());
@@ -26,7 +25,6 @@ public class VueDefausse extends Pane {
 
         deckImageView.setPreserveRatio(true);
 
-        // Create the tooltip and bind its text to the discard pile
         deckTooltip = new Tooltip();
         deckTooltip.textProperty().bind(Bindings.createStringBinding(() -> {
             return joueurCourant.getDefausse().stream()
