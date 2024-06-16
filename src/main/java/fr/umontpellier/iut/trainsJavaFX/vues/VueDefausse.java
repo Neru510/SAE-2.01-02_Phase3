@@ -34,12 +34,12 @@ public class VueDefausse extends StackPane {
 
         label.textProperty().bind(new StringBinding() {
             {
-                super.bind(jeu.joueurCourantProperty().getValue().piocheProperty());
+                super.bind(jeu.joueurCourantProperty().getValue().defausseProperty());
             }
 
             @Override
             protected String computeValue() {
-                return String.valueOf(jeu.joueurCourantProperty().getValue().piocheProperty().size());
+                return String.valueOf(jeu.joueurCourantProperty().getValue().defausseProperty().size());
             }
         });
         cercle.setFill(Color.WHITE);

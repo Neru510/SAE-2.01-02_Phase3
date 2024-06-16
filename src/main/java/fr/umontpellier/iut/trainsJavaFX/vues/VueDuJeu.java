@@ -7,11 +7,13 @@ import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.ListeDeCartes;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EcarteHorairesEstivaux;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixCarteRemorquage;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixPersonnelDeGare;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.tournormal.CarteEnMainChoisie;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -124,25 +126,11 @@ public class VueDuJeu extends GridPane {
             imageView.setPreserveRatio(true);
             vueBas.getChildren().add(imageView);
             map.put(imageView, c);
-            if (c.hasType(TypeCarte.ACTION)){
-                imageView.setOnMouseClicked(mouseEvent -> {
-                    Carte t = map.get(imageView);
-                    jeu.joueurCourantProperty().getValue().uneCarteDeLaMainAEteChoisie(t.getNom());
-                    vueBas.getChildren().remove(imageView);
-                });
-            }
 
             if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
                 imageView.setOnMouseClicked(mouseEvent -> {
+                    System.out.println("help");
                     Carte t = map.get(imageView);
-                    /*if (Objects.equals(t.getNom(), "Train omnibus")){
-                        System.out.println(t.getNom());
-                        jeu.finDePartieProperty().set(true);
-                    }*/
-                    System.out.println(t.getNom());
-                    if (checkAction.getValue()){
-                        jeu.uneCarteAChoisirChoisie(t.getNom());
-                    }
                     checkAction.setValue(false);
                     EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
                     etat.carteEnMainChoisie(t.getNom());
@@ -158,7 +146,7 @@ public class VueDuJeu extends GridPane {
                             @Override
                             public void handle(MouseEvent mouseEvent) {
                                 ChoixPersonnelDeGare c = new ChoixPersonnelDeGare((Joueur) jeu.joueurCourantProperty().getValue());
-                                c.carteAChoisirChoisie("Ferraille");
+                                c.carteEnMainChoisie("Ferraille");
                                 infos.getChildren().remove(ferraille);
                                 infos.getChildren().remove(argent);
                                 infos.getChildren().remove(piocher);
@@ -193,7 +181,7 @@ public class VueDuJeu extends GridPane {
                                 liste.add(carte);
                             }
                         }
-                        infos.modifierListeButtons(liste);
+                        infos.modifierListeButtonsParcAttractions(liste);
                     }
                     if (t.getNom().contains("Horaires estivaux")){
                         Button ecarter = new Button("Écarter");
@@ -207,7 +195,25 @@ public class VueDuJeu extends GridPane {
                             }
                         });
                     }
-
+                    if (t.getNom().contains("Feu de signalisation")){
+                        t.jouer((Joueur) jeu.joueurCourantProperty().getValue());
+                        if (!jeu.joueurCourantProperty().getValue().piocheProperty().get().isEmpty()){
+                            infos.modifierListeButtonsFeuDeSignalisation(jeu.joueurCourantProperty().get().piocheProperty().remove(0));
+                        }
+                        else if (!jeu.joueurCourantProperty().getValue().defausseProperty().get().isEmpty()){
+                            infos.modifierListeButtonsFeuDeSignalisation(jeu.joueurCourantProperty().get().defausseProperty().remove(0));
+                        }
+                    }
+                    if (t.getNom().contains("Remorquage")){
+                        ObservableList<Carte> cartes = jeu.joueurCourantProperty().get().defausseProperty().getValue();
+                        List<Carte> carteList = new ArrayList<>();
+                        for (Carte carte : cartes){
+                            if (carte.hasType(TypeCarte.TRAIN)) {
+                                carteList.add(carte);
+                            }
+                        }
+                        infos.modifierListeButtonRemorquage(carteList);
+                    }
                 });
             }
         }
