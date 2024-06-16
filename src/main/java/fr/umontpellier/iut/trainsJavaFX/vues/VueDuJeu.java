@@ -3,8 +3,12 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixPersonnelDeGare;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.tournormal.CarteEnMainChoisie;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -37,6 +41,9 @@ public class VueDuJeu extends GridPane {
     private VueReserve vueReserve;
     private VuePioche vuePioche;
     private VueDefausse vueDefausse;
+    private BooleanProperty checkAction;
+    private VueInstructionsBoutons infos;
+    private HBox listeChoix;
 
 
     public VueDuJeu(IJeu jeu) {
@@ -44,9 +51,10 @@ public class VueDuJeu extends GridPane {
         vueReserve = new VueReserve(jeu);
         plateau = new VuePlateau();
         vueCentre = new VBox(plateau);
-        Joueur joueurCourant = (Joueur) jeu.joueurCourantProperty().getValue();
-        vuePioche = new VuePioche(joueurCourant);
-        vueDefausse = new VueDefausse(joueurCourant);
+        vuePioche = new VuePioche(jeu);
+        vueDefausse = new VueDefausse(jeu);
+        listeChoix = new HBox();
+        infos = new VueInstructionsBoutons(jeu);
         vueGauche();
         Button passer = new Button("Passer");
         Label instruction = new Label();
@@ -58,6 +66,7 @@ public class VueDuJeu extends GridPane {
         ColumnConstraints col1 = new ColumnConstraints();
         col1.setPercentWidth(20);
         this.getColumnConstraints().add(col1);
+        checkAction = new SimpleBooleanProperty(false);
 
 
         vueBas = new HBox();
@@ -75,24 +84,22 @@ public class VueDuJeu extends GridPane {
     }
 
     public void vueDroite(){
-        VBox instructions = new VueInstructionsBoutons(jeu);
-        vueDroit = new VBox(new VueAutresJoueurs(jeu), instructions, new VueJoueurCourant(jeu));
-        vueDroit.minWidthProperty().bind(this.widthProperty().divide(5));
+        vueDroit = new VBox(new VueAutresJoueurs(jeu), infos, new VueJoueurCourant(jeu));
+        vueDroit.minWidthProperty().bind(this.widthProperty().divide(4));
         HBox.setHgrow(vueDroit, Priority.NEVER);
         vueDroit.setMaxHeight(Double.MAX_VALUE);
-        VBox.setVgrow(instructions, Priority.ALWAYS);
+        VBox.setVgrow(infos, Priority.ALWAYS);
         //vueDroit.prefHeightProperty().bind(this.heightProperty());
     }
 
     public void vueGauche(){
         //vueGauche.prefWidthProperty().bind(this.widthProperty().divide(3));
         vueGauche = new HBox(vuePioche, vueDefausse);
-        vuePioche.prefHeightProperty().bind(this.widthProperty().divide(2));
-        vuePioche.prefWidthProperty().bind(this.widthProperty().divide(2));
-        vueDefausse.prefHeightProperty().bind(this.widthProperty().divide(2));
-        vueDefausse.prefWidthProperty().bind(this.widthProperty().divide(2));
-        vueGauche.prefWidthProperty().bind(this.widthProperty());
-        vueGauche.prefHeightProperty().bind(this.heightProperty());
+        vuePioche.prefHeightProperty().bind(vueGauche.heightProperty());
+        vuePioche.prefWidthProperty().bind(vueGauche.widthProperty());
+
+        vueDefausse.prefHeightProperty().bind(vueGauche.heightProperty());
+        vueDefausse.prefWidthProperty().bind(vueGauche.widthProperty());
 
         VBox.setVgrow(vueGauche, Priority.ALWAYS);
 
@@ -110,11 +117,12 @@ public class VueDuJeu extends GridPane {
         Map<ImageView, Carte> map = new HashMap<>();
         for (Carte c : jeu.joueurCourantProperty().getValue().mainProperty().get()){
             ImageView imageView = new ImageView(creerURL(c));
+            System.out.println(creerURL(c));
             imageView.fitHeightProperty().bind(this.heightProperty().divide(4));
             imageView.setPreserveRatio(true);
             vueBas.getChildren().add(imageView);
             map.put(imageView, c);
-            if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
+            if (c.hasType(TypeCarte.ACTION)){
                 imageView.setOnMouseClicked(mouseEvent -> {
                     Carte t = map.get(imageView);
                     EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
@@ -122,11 +130,62 @@ public class VueDuJeu extends GridPane {
                     vueBas.getChildren().remove(imageView);
                 });
             }
+
+            if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
+                imageView.setOnMouseClicked(mouseEvent -> {
+                    Carte t = map.get(imageView);
+                    if (checkAction.getValue()){
+                        jeu.uneCarteAChoisirChoisie(t.getNom());
+                    }
+                    checkAction.setValue(false);
+                    EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
+                    etat.carteEnMainChoisie(t.getNom());
+                    vueBas.getChildren().remove(imageView);
+                    if (t.getNom().contains("Personnel de gare")){
+                        Button ferraille = new Button("Ferraille");
+                        infos.getChildren().add(ferraille);
+                        Button argent = new Button("Argent");
+                        infos.getChildren().add(argent);
+                        Button piocher = new Button("Piocher");
+                        infos.getChildren().add(piocher);
+                        ferraille.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                ChoixPersonnelDeGare c = new ChoixPersonnelDeGare((Joueur) jeu.joueurCourantProperty().getValue());
+                                c.carteAChoisirChoisie("Ferraille");
+                                infos.getChildren().remove(ferraille);
+                                infos.getChildren().remove(argent);
+                                infos.getChildren().remove(piocher);
+                            }
+                        });
+                        argent.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                ChoixPersonnelDeGare c = new ChoixPersonnelDeGare((Joueur) jeu.joueurCourantProperty().getValue());
+                                c.recevoirArgent();
+                                infos.getChildren().remove(ferraille);
+                                infos.getChildren().remove(argent);
+                                infos.getChildren().remove(piocher);
+                            }
+                        });
+                        piocher.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                            @Override
+                            public void handle(MouseEvent mouseEvent) {
+                                ChoixPersonnelDeGare c = new ChoixPersonnelDeGare((Joueur) jeu.joueurCourantProperty().getValue());
+                                c.piocheChoisie();
+                                infos.getChildren().remove(ferraille);
+                                infos.getChildren().remove(argent);
+                                infos.getChildren().remove(piocher);
+                            }
+                        });
+                    }
+                });
+            }
         }
 
         vueBas.setStyle("-fx-background-color: #efefef");
         vueBas.prefWidthProperty().bind(this.widthProperty());
-        vueBas.setAlignment(Pos.BOTTOM_CENTER);
+        vueBas.setAlignment(Pos.CENTER);
         vueBas.prefHeightProperty().bind(this.heightProperty().divide(4));
         vueBas.prefWidthProperty().bind(this.widthProperty());
         vueBas.setSpacing(10);
@@ -149,7 +208,6 @@ public class VueDuJeu extends GridPane {
     }
 
     public void creerBindings() {
-
         plateau.prefWidthProperty().bind(vueCentre.widthProperty());
         //vueCentre.setAlignment(Pos.CENTER);
         //plateau.prefHeightProperty().bind(vueCentre.heightProperty());
@@ -165,7 +223,4 @@ public class VueDuJeu extends GridPane {
     public IJeu getJeu() {
         return jeu;
     }
-
-    EventHandler<? super MouseEvent> actionPasserParDefaut = (mouseEvent -> System.out.println("Passer a été demandé"));
-
 }

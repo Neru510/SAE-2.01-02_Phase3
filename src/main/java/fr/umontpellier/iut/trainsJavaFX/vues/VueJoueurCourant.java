@@ -7,11 +7,16 @@ import fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos.VueJoueurCourantIn
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
 import java.util.ArrayList;
@@ -37,10 +42,11 @@ public class VueJoueurCourant extends VBox {
     private ArrayList<ImageView> cartesR;
     private StringProperty couleur;
     private CouleursJoueurs couleursJoueurs;
+    ListChangeListener<Carte> changeListener;
 
     public VueJoueurCourant(IJeu jeu){
         this.jeu = jeu;
-        this.joueurCourantInfo = new VueJoueurCourantInfo(jeu);
+        this.joueurCourantInfo = new VueJoueurCourantInfo(jeu.joueurCourantProperty());
         this.cartesenJeuVue = new HBox();
         this.cartesRecuesVue = new HBox();
         this.couleur = new SimpleStringProperty();
@@ -49,6 +55,7 @@ public class VueJoueurCourant extends VBox {
         this.cartesRecues = new HBox();
         this.cartesEnJeu = new HBox();
         this.conteneur1 = new VBox();
+        changeListener = null;
         Pane separator = new Pane();
         separator.setMinHeight(15);
         this.conteneur2 = new VBox(cartesenJeuVue, separator, cartesRecuesVue);
@@ -59,24 +66,33 @@ public class VueJoueurCourant extends VBox {
     }
 
     public void creerBindings(){
+        if (changeListener != null){
+            jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().removeListener(changeListener);
+        }
 
-        jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().addListener((ListChangeListener<Carte>) change -> {
-            cartesenJeuVue.getChildren().clear();
-            int i = 0;
-            for (Carte c : jeu.joueurCourantProperty().get().cartesEnJeuProperty().get()){
-                i++;
-                ImageView imageView = new ImageView(new Image(creerURL(c)));
-                imageView.setFitHeight(200);
-                imageView.setPreserveRatio(true);
-                if (i == 1){
-                    VBox.setMargin(imageView, new Insets(120));
+        ListChangeListener<Carte> changeListener = new ListChangeListener<Carte>() {
+            @Override
+            public void onChanged(Change<? extends Carte> change) {
+                System.out.println("A bien reçue les instructions de cartesEnJeu");
+                cartesenJeuVue.getChildren().clear();
+                int i = 0;
+                for (Carte c : jeu.joueurCourantProperty().get().cartesEnJeuProperty().get()) {
+                    i++;
+                    ImageView imageView = new ImageView(new Image(creerURL(c)));
+                    imageView.setFitHeight(200);
+                    imageView.setPreserveRatio(true);
+                    if (i == 1) {
+                        VBox.setMargin(imageView, new Insets(120));
+                    }
+                    cartesenJeuVue.getChildren().add(imageView);
                 }
-
-                cartesenJeuVue.getChildren().add(imageView);
             }
-        });
+        };
+
+        jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().addListener(changeListener);
 
         jeu.joueurCourantProperty().getValue().cartesRecuesProperty().addListener((ListChangeListener<Carte>) change -> {
+            System.out.println("A bien reçue les instructions de cartesRecues");
             cartesRecuesVue.getChildren().clear();
             int i = 0;
             for (Carte c : jeu.joueurCourantProperty().get().cartesRecuesProperty().get()){
@@ -122,20 +138,15 @@ public class VueJoueurCourant extends VBox {
 
         HBox.setHgrow(cartesenJeuVue, Priority.ALWAYS);
         HBox.setHgrow(cartesRecuesVue, Priority.ALWAYS);
-        cartesenJeuVue.setMinHeight(200);
-        cartesRecuesVue.setMinHeight(200);
+        cartesenJeuVue.setMinHeight(220);
+        cartesRecuesVue.setMinHeight(220);
 
         conteneur2.prefWidthProperty().bind(this.widthProperty());
     }
 
     public String creerURL(ICarte c){
-        String nomCarte = c.getNom();
-        nomCarte = nomCarte.toLowerCase();
-        nomCarte = nomCarte.replaceAll(" ", "_");
-        nomCarte = nomCarte.replaceAll("é", "e");
-        nomCarte = nomCarte.replaceAll("ô", "o");
-        nomCarte = "images/cartes/" + nomCarte + ".jpg";
-        return nomCarte;
+        String nomCarte = c.getNom().toLowerCase().replaceAll(" ", "_").replaceAll("é", "e").replaceAll("ô", "o");
+        return "images/cartes/" + nomCarte + ".jpg";
     }
 
 }

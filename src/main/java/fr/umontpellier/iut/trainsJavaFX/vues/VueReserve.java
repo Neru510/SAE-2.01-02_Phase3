@@ -2,19 +2,11 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.ICarte;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
-import fr.umontpellier.iut.trainsJavaFX.IJoueur;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.ListeDeCartes;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.tournormal.AchatCarte;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -52,19 +44,14 @@ public class VueReserve extends HBox {
             setAlignment(Pos.TOP_LEFT);
             vues.add(imageCarte);
             imageCarte.setMinWidth(0);
-            System.out.println(imageCarte.getMinWidth());
-            imageCarte.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    if (imageCarte.getMinWidth() != 0.0){
-                        ICarte t = imageCarte.getCarte();
-                        EtatJoueur etatJoueur = new AchatCarte((Joueur) jeu.joueurCourantProperty().getValue());
-                        etatJoueur.carteEnReserveChoisie(t.getNom());
-                    }
-                    imageCarte.setMinWidth(getWidth());
-                    imageCarte.carteMouseEntered();
-                    System.out.println(imageCarte.getMinWidth());
+            imageCarte.setOnMouseClicked(mouseEvent -> {
+                if (imageCarte.getMinWidth() != 0.0){
+                    ICarte t = imageCarte.getCarte();
+                    jeu.uneCarteDeLaReserveEstAchetee(t.getNom());
                 }
+                imageCarte.setMinWidth(getWidth());
+                imageCarte.carteMouseEntered();
+                System.out.println(imageCarte.getMinWidth());
             });
 
         }
@@ -73,14 +60,11 @@ public class VueReserve extends HBox {
         conteneur.setContent(vue);
         HBox.setHgrow(conteneur, Priority.ALWAYS);
         getChildren().add(conteneur);
-        jeu.joueurCourantProperty().addListener(new ChangeListener<IJoueur>() {
-            @Override
-            public void changed(ObservableValue<? extends IJoueur> observableValue, IJoueur joueur, IJoueur t1) {
-                for (VueCarteReserve v : vues){
-                    v.setMinWidth(0);
-                    v.setMinHeight(0);
-                    v.carteMouseExit();
-                }
+        jeu.joueurCourantProperty().addListener((observableValue, joueur, t1) -> {
+            for (VueCarteReserve v : vues){
+                v.setMinWidth(0);
+                v.setMinHeight(0);
+                v.carteMouseExit();
             }
         });
     }
