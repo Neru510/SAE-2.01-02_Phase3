@@ -7,15 +7,16 @@ import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.ListeDeCartes;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.tournormal.AchatCarte;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -32,7 +33,6 @@ public class VueReserve extends HBox {
     public VueReserve(IJeu jeu) {
         this.reserve = jeu.getReserve();
         this.taillePileParCarte = jeu.getTaillesPilesReserveProperties();
-        Map<ImageView, Carte> map = new HashMap<>();
         vue = new FlowPane();
         ScrollPane conteneur = new ScrollPane();
 
@@ -43,7 +43,7 @@ public class VueReserve extends HBox {
 
 
         for (Carte carte : reserve){
-            VueCarte imageCarte = new VueCarte(carte);
+            VueCarte imageCarte = new VueCarte(carte, jeu);
             setAlignment(Pos.TOP_LEFT);
             vue.getChildren().add(imageCarte);
             imageCarte.setOnMouseClicked(mouseEvent -> {
@@ -57,15 +57,4 @@ public class VueReserve extends HBox {
         HBox.setHgrow(conteneur, Priority.ALWAYS);
         getChildren().add(conteneur);
     }
-
-    public String creerURL(ICarte c){
-        String nomCarte = c.getNom();
-        nomCarte = nomCarte.toLowerCase();
-        nomCarte = nomCarte.replaceAll(" ", "_");
-        nomCarte = nomCarte.replaceAll("é", "e");
-        nomCarte = nomCarte.replaceAll("ô", "o");
-        nomCarte = "images/cartes/" + nomCarte + ".jpg";
-        return nomCarte;
-    }
-
 }

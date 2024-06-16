@@ -80,8 +80,6 @@ public class VueDuJeu extends GridPane {
         //vueGauche.prefWidthProperty().bind(this.widthProperty().divide(3));
         vueGauche.prefHeightProperty().bind(this.heightProperty());
         VBox.setVgrow(vueGauche, Priority.ALWAYS);
-
-        vueGauche.setStyle("-fx-background-color: blue");
     }
 
     public void vueCentre(){
@@ -100,12 +98,14 @@ public class VueDuJeu extends GridPane {
             imageView.setPreserveRatio(true);
             vueBas.getChildren().add(imageView);
             map.put(imageView, c);
-            imageView.setOnMouseClicked(mouseEvent -> {
-                Carte t = map.get(imageView);
-                EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
-                etat.carteEnMainChoisie(t.getNom());
-                vueBas.getChildren().remove(imageView);
-            });
+            if (jeu.joueurCourantProperty().getValue().nbJetonsRailsProperty().getValue() < 20){
+                imageView.setOnMouseClicked(mouseEvent -> {
+                    Carte t = map.get(imageView);
+                    EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
+                    etat.carteEnMainChoisie(t.getNom());
+                    vueBas.getChildren().remove(imageView);
+                });
+            }
         }
 
         vueBas.setStyle("-fx-background-color: #efefef");
