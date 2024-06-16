@@ -6,16 +6,20 @@ import fr.umontpellier.iut.trainsJavaFX.mecanique.plateau.Plateau;
 import fr.umontpellier.iut.trainsJavaFX.vues.DonneesGraphiques;
 import fr.umontpellier.iut.trainsJavaFX.vues.VueChoixJoueurs;
 import fr.umontpellier.iut.trainsJavaFX.vues.VueDuJeu;
+import fr.umontpellier.iut.trainsJavaFX.vues.VueResultats;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class TrainsIHM extends Application {
     private VueChoixJoueurs vueChoixJoueurs;
@@ -60,7 +64,7 @@ public class TrainsIHM extends Application {
         Scene scene = new Scene(vueDuJeu, Screen.getPrimary().getBounds().getWidth() * DonneesGraphiques.pourcentageEcran, Screen.getPrimary().getBounds().getHeight() * DonneesGraphiques.pourcentageEcran); // la scene doit être créée avant de mettre en place les bindings
         jeu.run(); // le jeu doit être démarré après que les bindings ont été mis en place
 
-//        VueResultats vueResultats = new VueResultats(this);
+        VueResultats vueResultats = new VueResultats(this);
         primaryStage.setMinWidth(Screen.getPrimary().getBounds().getWidth() / 2.5);
         primaryStage.setMinHeight(Screen.getPrimary().getBounds().getHeight() / 2.5);
         primaryStage.setMaxWidth(Screen.getPrimary().getBounds().getWidth());
@@ -82,13 +86,13 @@ public class TrainsIHM extends Application {
     };
 
     public void arreterJeu() {
-/*        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setContentText("On arrête de jouer ?");
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {*/
+        if (result.isPresent() && result.get() == ButtonType.OK) {
             Platform.exit();
-//        }
+        }
     }
 
     public Jeu getJeu() {

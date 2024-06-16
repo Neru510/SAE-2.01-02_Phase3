@@ -81,6 +81,7 @@ public class VueDuJeu extends GridPane {
         vueBas();
         vueCentre();
         creerBindings();
+
     }
 
     public void vueDroite(){
@@ -125,8 +126,10 @@ public class VueDuJeu extends GridPane {
             if (c.hasType(TypeCarte.ACTION)){
                 imageView.setOnMouseClicked(mouseEvent -> {
                     Carte t = map.get(imageView);
-                    EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
-                    etat.carteEnMainChoisie(t.getNom());
+                    jeu.joueurCourantProperty().getValue().uneCarteDeLaMainAEteChoisie(t.getNom());
+                    if (t.getNom() == "Train omnibus"){
+                        jeu.finDePartieProperty().set(true);
+                    }
                     vueBas.getChildren().remove(imageView);
                 });
             }
