@@ -1,10 +1,18 @@
 package fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos;
 
+import fr.umontpellier.iut.trainsJavaFX.GestionJeu;
+import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.IJoueur;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.vues.CouleursJoueurs;
+import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Binding;
 import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -13,11 +21,14 @@ import javafx.scene.layout.BorderPane;
 
 public class VueJoueurCourantInfo extends VueJoueursInfos {
     private ObjectProperty<IJoueur> joueur;
+    private IJeu jeu;
     private ImageView cube;
+    private int i;
 
-    public VueJoueurCourantInfo(ObjectProperty<IJoueur> joueur){
+    public VueJoueurCourantInfo(IJeu jeu, ObjectProperty<IJoueur> joueur){
         super (new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new Label(), new CouleursJoueurs(), new BorderPane());
         this.joueur = joueur;
+        this.jeu = jeu;
         this.cube = new ImageView(new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(joueur.getValue().getCouleur()) + ".png"));
         creerBindings();
         fillVue(cube);
@@ -26,6 +37,53 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
     }
 
     public void creerBindings(){
+        nomJoueur.textProperty().bind(new StringBinding() {
+            {
+                super.bind(jeu.joueurCourantProperty());
+            }
+            @Override
+            protected String computeValue() {
+                return jeu.joueurCourantProperty().getValue().getNom();
+            }
+        });
+        jeu.joueurCourantProperty().addListener(new ChangeListener<IJoueur>() {
+            @Override
+            public void changed(ObservableValue<? extends IJoueur> observableValue, IJoueur joueur, IJoueur t1) {
+                argentLabel.textProperty().bind(t1.argentProperty().asString());
+                railsLabel.textProperty().bind(t1.pointsRailsProperty().asString());
+                pointsVictoire.textProperty().bind(t1.scoreProperty().asString());
+                cubes.textProperty().bind(t1.nbJetonsRailsProperty().asString());
+                pioche.textProperty().bind(new StringBinding() {
+                    {
+                        super.bind(t1.piocheProperty());
+                    }
+                    @Override
+                    protected String computeValue() {
+                        return String.valueOf(t1.piocheProperty().size());
+                    }
+                });
+                defausse.textProperty().bind(new StringBinding() {
+                    {
+                        super.bind(t1.defausseProperty());
+                    }
+                    @Override
+                    protected String computeValue() {
+                        return String.valueOf(t1.defausseProperty().size());
+                    }
+                });
+                cartesEnMain.textProperty().bind(new StringBinding() {
+                    {
+                        super.bind(t1.mainProperty());
+                    }
+                    @Override
+                    protected String computeValue() {
+                        return String.valueOf(t1.mainProperty().size());
+                    }
+                });
+            }
+        });
+
+        /*
 
         cube.imageProperty().unbind();
         argentLabel.textProperty().unbind();
@@ -69,16 +127,15 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
                 return joueur.getValue().getNom();
             }
         };
+        i = 0;
 
-        StringBinding argentBinding = new StringBinding() {
-            {
-                super.bind(joueur.getValue().argentProperty());
-            }
+
+        joueur.getValue().argentProperty().addListener(new ChangeListener<Number>() {
             @Override
-            protected String computeValue() {
-                return Integer.toString(joueur.getValue().argentProperty().getValue());
+            public void changed(ObservableValue<? extends Number> observableValue, Number number, Number t1) {
+                argentLabel.setText(String.valueOf(joueur.getValue().argentProperty().getValue()));
             }
-        };
+        });
 
 
         StringBinding railsBinding = new StringBinding() {
@@ -144,7 +201,7 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
             }
         });
 
-        argentLabel.textProperty().bind(argentBinding);
+        //argentLabel.textProperty().bind(argentBinding);
         cubes.textProperty().bind(cubesBinding);
         railsLabel.textProperty().bind(railsBinding);
         pointsVictoire.textProperty().bind(nbPointVictoireBinding);
@@ -153,6 +210,6 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
         defausse.textProperty().bind(defausseBinding);
 
         nomJoueur.textProperty().bind(nomJoueurBinding);
-
+*/
     }
 }

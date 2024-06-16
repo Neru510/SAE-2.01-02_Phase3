@@ -2,6 +2,7 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.ICarte;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
+import fr.umontpellier.iut.trainsJavaFX.IJoueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
 import fr.umontpellier.iut.trainsJavaFX.vues.vuesJoueursInfos.VueJoueurCourantInfo;
 import javafx.beans.binding.StringBinding;
@@ -46,7 +47,7 @@ public class VueJoueurCourant extends VBox {
 
     public VueJoueurCourant(IJeu jeu){
         this.jeu = jeu;
-        this.joueurCourantInfo = new VueJoueurCourantInfo(jeu.joueurCourantProperty());
+        this.joueurCourantInfo = new VueJoueurCourantInfo(jeu, jeu.joueurCourantProperty());
         this.cartesenJeuVue = new HBox();
         this.cartesRecuesVue = new HBox();
         this.couleur = new SimpleStringProperty();
@@ -66,45 +67,44 @@ public class VueJoueurCourant extends VBox {
     }
 
     public void creerBindings(){
-        if (changeListener != null){
-            jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().removeListener(changeListener);
-        }
-
-        ListChangeListener<Carte> changeListener = new ListChangeListener<Carte>() {
-            @Override
-            public void onChanged(Change<? extends Carte> change) {
-                cartesenJeuVue.getChildren().clear();
-                int i = 0;
-                for (Carte c : jeu.joueurCourantProperty().get().cartesEnJeuProperty().get()) {
-                    i++;
-                    ImageView imageView = new ImageView(new Image(creerURL(c)));
-                    imageView.setFitHeight(200);
-                    imageView.setPreserveRatio(true);
-                    if (i == 1) {
-                        VBox.setMargin(imageView, new Insets(120));
+        jeu.joueurCourantProperty().addListener((observableValue, joueur, t1) -> {
+            t1.cartesEnJeuProperty().addListener(new ListChangeListener<Carte>() {
+                @Override
+                public void onChanged(Change<? extends Carte> change) {
+                    cartesenJeuVue.getChildren().clear();
+                    int i = 0;
+                    for (Carte c : t1.cartesEnJeuProperty().get()) {
+                        i++;
+                        ImageView imageView = new ImageView(new Image(creerURL(c)));
+                        imageView.setFitHeight(200);
+                        imageView.setPreserveRatio(true);
+                        if (i == 1) {
+                            VBox.setMargin(imageView, new Insets(120));
+                        }
+                        cartesenJeuVue.getChildren().add(imageView);
                     }
-                    cartesenJeuVue.getChildren().add(imageView);
                 }
-            }
-        };
+            });
+            t1.cartesRecuesProperty().addListener(new ListChangeListener<Carte>() {
+                @Override
+                public void onChanged(Change<? extends Carte> change) {
+                    int i = 0;
+                    for (Carte c : t1.cartesRecuesProperty().get()) {
+                        i++;
+                        ImageView imageView = new ImageView(new Image(creerURL(c)));
+                        imageView.setFitHeight(200);
+                        imageView.setPreserveRatio(true);
+                        if (i == 1) {
+                            VBox.setMargin(imageView, new Insets(120));
+                        }
 
-        jeu.joueurCourantProperty().getValue().cartesEnJeuProperty().addListener(changeListener);
-
-        jeu.joueurCourantProperty().getValue().cartesRecuesProperty().addListener((ListChangeListener<Carte>) change -> {
-            cartesRecuesVue.getChildren().clear();
-            int i = 0;
-            for (Carte c : jeu.joueurCourantProperty().get().cartesRecuesProperty().get()){
-                i++;
-                ImageView imageView = new ImageView(new Image(creerURL(c)));
-                imageView.setFitHeight(200);
-                imageView.setPreserveRatio(true);
-                if (i == 1){
-                    VBox.setMargin(imageView, new Insets(120));
+                        cartesRecuesVue.getChildren().add(imageView);
+                    }
                 }
+            });
 
-                cartesRecuesVue.getChildren().add(imageView);
-            }
         });
+
 
         this.styleProperty().bind(new StringBinding() {
             {

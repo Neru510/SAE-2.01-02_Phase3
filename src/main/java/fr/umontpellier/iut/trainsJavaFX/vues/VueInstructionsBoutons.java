@@ -118,17 +118,14 @@ public class VueInstructionsBoutons extends VBox {
             cartesNoms.add(c.getNom());
             imageView.setFitHeight(200);
             imageView.setPreserveRatio(true);
-            imageView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                @Override
-                public void handle(MouseEvent mouseEvent) {
-                    buttons.remove(c);
-                    for (Carte c : buttons){
-                        jeu.joueurCourantProperty().getValue().mainProperty().add(c);
-                    }
-                    ChoixTrainEchangeur choix = new ChoixTrainEchangeur((Joueur) jeu.joueurCourantProperty().getValue(), cartesNoms);
-                    choix.carteEnJeuChoisie(c.getNom());
-                    cartes.getChildren().clear();
+            imageView.setOnMouseClicked(mouseEvent -> {
+                buttons.remove(c);
+                for (Carte c1 : buttons){
+                    jeu.joueurCourantProperty().getValue().mainProperty().add(c1);
                 }
+                ChoixTrainEchangeur choix = new ChoixTrainEchangeur((Joueur) jeu.joueurCourantProperty().getValue(), cartesNoms);
+                choix.carteEnJeuChoisie(c.getNom());
+                cartes.getChildren().clear();
             });
         }
     }
