@@ -3,6 +3,7 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.ListeDeCartes;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.EtatJoueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixPersonnelDeGare;
@@ -14,11 +15,14 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,11 +89,13 @@ public class VueDuJeu extends GridPane {
     }
 
     public void vueDroite(){
-        vueDroit = new VBox(new VueAutresJoueurs(jeu), infos, new VueJoueurCourant(jeu));
+        ScrollPane conteneurInfo = new ScrollPane(infos);
+        vueDroit = new VBox(new VueAutresJoueurs(jeu), conteneurInfo, new VueJoueurCourant(jeu));
         vueDroit.minWidthProperty().bind(this.widthProperty().divide(4));
         HBox.setHgrow(vueDroit, Priority.NEVER);
         vueDroit.setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(infos, Priority.ALWAYS);
+        VBox.setVgrow(conteneurInfo, Priority.ALWAYS);
         //vueDroit.prefHeightProperty().bind(this.heightProperty());
     }
 
@@ -117,8 +123,7 @@ public class VueDuJeu extends GridPane {
         vueBas.getChildren().clear();
         Map<ImageView, Carte> map = new HashMap<>();
         for (Carte c : jeu.joueurCourantProperty().getValue().mainProperty().get()){
-            ImageView imageView = new ImageView(creerURL(c));
-            System.out.println(creerURL(c));
+            ImageView imageView = new ImageView(VueJoueurCourant.creerURL(c));
             imageView.fitHeightProperty().bind(this.heightProperty().divide(4));
             imageView.setPreserveRatio(true);
             vueBas.getChildren().add(imageView);
@@ -149,7 +154,7 @@ public class VueDuJeu extends GridPane {
                         infos.getChildren().add(ferraille);
                         Button argent = new Button("Argent");
                         infos.getChildren().add(argent);
-                        Button piocher = new Button("Piocher");
+                        Button piocher = new Button("Deck");
                         infos.getChildren().add(piocher);
                         ferraille.setOnMouseClicked(new EventHandler<MouseEvent>() {
                             @Override
@@ -182,6 +187,16 @@ public class VueDuJeu extends GridPane {
                             }
                         });
                     }
+                    if (t.getNom().contains("Parc d'attractions")){
+                        ListeDeCartes listeDeCartes = ((Joueur) jeu.joueurCourantProperty().getValue()).getCartesEnJeu();
+                        List<Carte> liste = new ArrayList<>();
+                        for (Carte carte : listeDeCartes){
+                            if (carte.hasType(TypeCarte.TRAIN)){
+                                liste.add(carte);
+                            }
+                        }
+                        infos.modifierListeButtons(liste);
+                    }
                 });
             }
         }
@@ -195,19 +210,6 @@ public class VueDuJeu extends GridPane {
         HBox.setHgrow(vueBas, Priority.NEVER);
         this.getChildren().remove(vueBas);
         add(vueBas, 1,1);
-    }
-
-    public String creerURL(Carte c){
-        String nomCarte = c.getNom();
-        nomCarte = nomCarte.replaceAll(" ", "_");
-        nomCarte = nomCarte.replaceAll("é", "e");
-        nomCarte = nomCarte.replaceAll("ô", "o");
-        char premiereLettre = nomCarte.charAt(0);
-        char premiereLettreCopie = nomCarte.charAt(0);
-        premiereLettre = Character.toLowerCase(premiereLettre);
-        nomCarte = nomCarte.replaceFirst(String.valueOf(premiereLettreCopie), String.valueOf(premiereLettre));
-        nomCarte = "images/cartes/" + nomCarte + ".jpg";
-        return nomCarte;
     }
 
     public void creerBindings() {

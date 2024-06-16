@@ -47,7 +47,7 @@ public class VueCarteReserve extends StackPane {
         cercle.setStroke(Color.BLACK);
         StackPane conteur = new StackPane(cercle);
 
-        Image image = new Image(creerURL(carte));
+        Image image = new Image(VueJoueurCourant.creerURL(carte));
         imageCarte = new ImageView(image);
         imageCarte.setPreserveRatio(true);
         imageCarte.setFitWidth(130);
@@ -60,15 +60,6 @@ public class VueCarteReserve extends StackPane {
     }
     public void setCarteChoisieListener(EventHandler<MouseEvent> quandCarteEstChoisie) {
         setOnMouseClicked(quandCarteEstChoisie);
-    }
-    public String creerURL(ICarte c){
-        String nomCarte = c.getNom();
-        nomCarte = nomCarte.toLowerCase();
-        nomCarte = nomCarte.replaceAll(" ", "_");
-        nomCarte = nomCarte.replaceAll("é", "e");
-        nomCarte = nomCarte.replaceAll("ô", "o");
-        nomCarte = "images/cartes/" + nomCarte + ".jpg";
-        return nomCarte;
     }
 
     public ICarte getCarte(){

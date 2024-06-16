@@ -144,7 +144,7 @@ public class VueJoueurCourant extends VBox {
         conteneur2.prefWidthProperty().bind(this.widthProperty());
     }
 
-    public String creerURL(ICarte c){
+    public static String creerURL(ICarte c){
         String nomCarte = c.getNom().toLowerCase().replaceAll(" ", "_").replaceAll("é", "e").replaceAll("ô", "o");
         return "images/cartes/" + nomCarte + ".jpg";
     }
