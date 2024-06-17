@@ -1,13 +1,14 @@
 package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
+import fr.umontpellier.iut.trainsJavaFX.IJoueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.Joueur;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.Carte;
 import fr.umontpellier.iut.trainsJavaFX.mecanique.cartes.TypeCarte;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixCarteRemorquage;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixFeuDeSignalisation;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixTrainEchangeur;
-import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.ChoixTrainParcAttraction;
+import fr.umontpellier.iut.trainsJavaFX.mecanique.etatsJoueur.suitechoix.*;
+import javafx.beans.binding.ObjectBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -18,6 +19,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -126,6 +128,52 @@ public class VueInstructionsBoutons extends VBox {
                 ChoixTrainEchangeur choix = new ChoixTrainEchangeur((Joueur) jeu.joueurCourantProperty().getValue(), cartesNoms);
                 choix.carteEnJeuChoisie(c.getNom());
                 cartes.getChildren().clear();
+            });
+        }
+    }
+
+    public void modifierListeButtonCentreRenseignements(){
+        final int[] i = {0};
+        List<Carte> buttons = new ArrayList<>();
+         while (i[0] < 4 && !jeu.joueurCourantProperty().getValue().piocheProperty().isEmpty()){
+            i[0]++;
+            jeu.joueurCourantProperty().getValue().cartesAChoisir().add(jeu.joueurCourantProperty().getValue().piocheProperty().get(0));
+            buttons.add(jeu.joueurCourantProperty().getValue().piocheProperty().remove(0));
+        }
+        ChoixCarteCentreDeRenseignements choix = new ChoixCarteCentreDeRenseignements((Joueur) jeu.joueurCourantProperty().getValue());
+         i[0] = 0;
+        for (Carte c : buttons){
+            ImageView imageView = new ImageView(new Image(VueJoueurCourant.creerURL(c)));
+            cartes.getChildren().add(imageView);
+            jeu.joueurCourantProperty().getValue().mainProperty().remove(c);
+            imageView.setFitHeight(200);
+            imageView.setPreserveRatio(true);
+            imageView.setOnMouseClicked(mouseEvent -> {
+                if (i[0] == 0){
+                    choix.actionCarteChoisie(c.getNom());
+                    cartes.getChildren().remove(imageView);
+                    i[0]++;
+                }
+                else {
+                    jeu.joueurCourantProperty().getValue().piocheProperty().add(c);
+                    cartes.getChildren().remove(imageView);
+                }
+                if (cartes.getChildren().isEmpty()){
+                    choix.passer();
+                    System.out.println(jeu.joueurCourantProperty().getValue().piocheProperty());
+                }
+            });
+            passer.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if (!cartes.getChildren().isEmpty()){
+                        choix.passer();
+                        cartes.getChildren().clear();
+                    }
+                    else {
+                        jeu.passerAEteChoisi();
+                    }
+                }
             });
         }
     }

@@ -213,6 +213,9 @@ public class VueDuJeu extends GridPane {
                         }
                         infos.modifierListeButtonEchangeur(cartes);
                     }
+                    if (t.getNom().contains("Centre de renseignements")){
+                        infos.modifierListeButtonCentreRenseignements();
+                    }
                 });
             }
         }
