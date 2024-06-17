@@ -2,8 +2,12 @@ package fr.umontpellier.iut.trainsJavaFX.vues;
 
 import fr.umontpellier.iut.trainsJavaFX.ICarte;
 import fr.umontpellier.iut.trainsJavaFX.IJeu;
+import fr.umontpellier.iut.trainsJavaFX.IJoueur;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -32,14 +36,18 @@ public class VueDefausse extends StackPane {
         Circle cercle = new Circle(15);
         Label label = new Label();
 
-        label.textProperty().bind(new StringBinding() {
-            {
-                super.bind(jeu.joueurCourantProperty().getValue().defausseProperty());
-            }
-
+        jeu.joueurCourantProperty().addListener(new ChangeListener<IJoueur>() {
             @Override
-            protected String computeValue() {
-                return String.valueOf(jeu.joueurCourantProperty().getValue().defausseProperty().size());
+            public void changed(ObservableValue<? extends IJoueur> observableValue, IJoueur joueur, IJoueur t1) {
+                label.textProperty().bind(new ObjectBinding<String>() {
+                    {
+                        super.bind(t1.defausseProperty());
+                    }
+                    @Override
+                    protected String computeValue() {
+                        return String.valueOf(t1.defausseProperty().size());
+                    }
+                });
             }
         });
         cercle.setFill(Color.WHITE);
