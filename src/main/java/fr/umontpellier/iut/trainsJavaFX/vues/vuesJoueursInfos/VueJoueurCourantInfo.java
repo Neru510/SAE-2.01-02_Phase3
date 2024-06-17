@@ -53,6 +53,16 @@ public class VueJoueurCourantInfo extends VueJoueursInfos {
                 railsLabel.textProperty().bind(t1.pointsRailsProperty().asString());
                 pointsVictoire.textProperty().bind(t1.scoreProperty().asString());
                 cubes.textProperty().bind(t1.nbJetonsRailsProperty().asString());
+                cube.imageProperty().bind(new ObjectBinding<>() {
+                    {
+                        super.bind(jeu.joueurCourantProperty());
+                    }
+
+                    @Override
+                    protected Image computeValue() {
+                        return new Image("images/icons/cube_" + couleursJoueurs.getCouleurAnglais(t1.getCouleur()) + ".png");
+                    }
+                });
                 pioche.textProperty().bind(new StringBinding() {
                     {
                         super.bind(t1.piocheProperty());
