@@ -127,8 +127,7 @@ public class VueDuJeu extends GridPane {
                 imageView.setOnMouseClicked(mouseEvent -> {
                     Carte t = map.get(imageView);
                     checkAction.setValue(false);
-                    EtatJoueur etat = new CarteEnMainChoisie((Joueur) jeu.joueurCourantProperty().getValue());
-                    etat.carteEnMainChoisie(t.getNom());
+                    jeu.joueurCourantProperty().getValue().uneCarteDeLaMainAEteChoisie(t.getNom());
                     vueBas.getChildren().remove(imageView);
                     if (t.getNom().contains("Personnel de gare")){
                         Button ferraille = new Button("Ferraille");
