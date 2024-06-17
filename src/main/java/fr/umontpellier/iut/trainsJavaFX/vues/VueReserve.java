@@ -51,7 +51,6 @@ public class VueReserve extends HBox {
                 }
                 imageCarte.setMinWidth(getWidth());
                 imageCarte.carteMouseEntered();
-                System.out.println(imageCarte.getMinWidth());
             });
 
         }
